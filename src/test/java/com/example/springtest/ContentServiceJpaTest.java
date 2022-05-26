@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,6 +17,10 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 /*
 @Service is not created, but @Bean in configuration is created
+@DataJpaTest can be used if you want to test JPA applications.
+By default it will configure an in-memory embedded database,
+scan for @Entity classes and configure Spring Data JPA repositories.
+Regular @Component beans will not be loaded into the ApplicationContext.
  */
 public class ContentServiceJpaTest {
 
@@ -54,7 +59,19 @@ public class ContentServiceJpaTest {
         Assertions.assertAll("return content vs db content",
                 () -> Assertions.assertEquals(dbContent.getContent(), returnContent.getContent(), "content must the same"),
                 () -> Assertions.assertEquals(dbContent.getCreatedAt(), returnContent.getCreatedAt(), "created at must the same"));
+    }
 
+    @Test
+    public void test3() {
+        GoogleService googleService = Mockito.mock(GoogleService.class);
+        ContentService contentService = new ContentService(contentRepository, googleService);
 
+        Mockito.when(googleService.requestGoogle()).thenReturn("chich choe");
+        Content returnContent = contentService.saveNewContent();
+        Content dbContent = contentRepository.findById(returnContent.getId()).get();
+
+        Assertions.assertAll("return content vs db content",
+                () -> Assertions.assertEquals(dbContent.getContent(), returnContent.getContent(), "content must the same"),
+                () -> Assertions.assertEquals(dbContent.getCreatedAt(), returnContent.getCreatedAt(), "created at must the same"));
     }
 }
