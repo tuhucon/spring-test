@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -34,7 +34,7 @@ public class ContentServiceJpaTest {
     ContentService contentService;
 
     @Autowired(required = false)
-    RestTemplate restTemplate;
+    RestTemplateBuilder restTemplateBuilder;
 
     @Autowired(required = false)
     ObjectMapper objectMapper;
@@ -44,13 +44,13 @@ public class ContentServiceJpaTest {
         Assertions.assertAll(() -> Assertions.assertNotNull(contentRepository, "content repository must not null"), //OK
                 () -> Assertions.assertNotNull(googleService, "google service must not null"), //NG
                 () -> Assertions.assertNotNull(contentService, "content service must not null"), //NG
-                () -> Assertions.assertNotNull(restTemplate, "test template must not null"), //OK
+                () -> Assertions.assertNotNull(restTemplateBuilder, "test template must not null"), //OK
                 () -> Assertions.assertNotNull(objectMapper, "object mapper must not null")); //NG
     }
 
     @Test
     public void test2() {
-        GoogleService googleService = new GoogleService(restTemplate);
+        GoogleService googleService = new GoogleService(restTemplateBuilder);
         ContentService contentService = new ContentService(contentRepository, googleService);
 
         Content returnContent = contentService.saveNewContent();

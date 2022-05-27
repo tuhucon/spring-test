@@ -1,7 +1,6 @@
 package com.example.springtest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
-import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(SpringExtension.class)
 @RestClientTest(GoogleService.class)
@@ -24,14 +22,7 @@ public class GoogleServiceTest {
     GoogleService googleService;
 
     @Autowired
-    RestTemplate restTemplate;
-
     MockRestServiceServer mockRestServiceServer;
-
-    @BeforeAll
-    public void setup() {
-        mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
-    }
 
     @Test
     public void test1() {
